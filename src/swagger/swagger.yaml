@@ -1,0 +1,170 @@
+swagger: '2.0'
+info:
+  title: Transactions API
+  description: API permettant de visualiser et de manipuler les transactions utilisateur.
+  version: '1.0.0'
+host: localhost:3001
+basePath: /api/v1
+schemes:
+  - http
+paths:
+  /transactions:
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - Transactions Module
+      summary: Liste des transactions mensuelles
+      description: Récupère toutes les transactions du mois en cours, groupées par compte.
+      parameters:
+        - name: month
+          in: query
+          description: Le mois à récupérer sous la forme `YYYY-MM`.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Liste des transactions récupérée avec succès
+          schema:
+            $ref: '#/definitions/TransactionsList'
+        '400':
+          description: Requête invalide (paramètres manquants ou incorrects)
+        '401':
+          description: Non autorisé (token invalide ou absent)
+        '500':
+          description: Erreur interne du serveur
+
+  /transactions/{transactionId}:
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - Transactions Module
+      summary: Détails d'une transaction
+      description: Récupère les détails d'une transaction spécifique.
+      parameters:
+        - name: transactionId
+          in: path
+          description: L'ID unique de la transaction à récupérer.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Détails de la transaction récupérés avec succès
+          schema:
+            $ref: '#/definitions/TransactionDetails'
+        '400':
+          description: Requête invalide
+        '401':
+          description: Non autorisé
+        '404':
+          description: Transaction non trouvée
+        '500':
+          description: Erreur interne du serveur
+
+    put:
+      security:
+        - BearerAuth: []
+      tags:
+        - Transactions Module
+      summary: Mise à jour d'une transaction
+      description: Met à jour les informations d'une transaction spécifique.
+      parameters:
+        - name: transactionId
+          in: path
+          description: L'ID unique de la transaction à modifier.
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: Données de la transaction à modifier.
+          required: true
+          schema:
+            $ref: '#/definitions/UpdateTransaction'
+      responses:
+        '200':
+          description: Transaction mise à jour avec succès
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        '400':
+          description: Requête invalide
+        '401':
+          description: Non autorisé
+        '404':
+          description: Transaction non trouvée
+        '500':
+          description: Erreur interne du serveur
+
+securityDefinitions:
+  BearerAuth:
+    type: apiKey
+    name: Authorization
+    in: header
+
+definitions:
+  TransactionsList:
+    type: object
+    properties:
+      transactions:
+        type: array
+        items:
+          $ref: '#/definitions/TransactionSummary'
+
+  TransactionSummary:
+    type: object
+    properties:
+      id:
+        type: string
+        description: ID unique de la transaction
+      date:
+        type: string
+        format: date
+        description: Date de la transaction
+      amount:
+        type: number
+        format: float
+        description: Montant de la transaction
+      account:
+        type: string
+        description: Compte associé à la transaction
+
+  TransactionDetails:
+    type: object
+    properties:
+      id:
+        type: string
+        description: ID unique de la transaction
+      date:
+        type: string
+        format: date
+        description: Date de la transaction
+      amount:
+        type: number
+        format: float
+        description: Montant de la transaction
+      account:
+        type: string
+        description: Compte associé à la transaction
+      description:
+        type: string
+        description: Description ou libellé de la transaction
+
+  UpdateTransaction:
+    type: object
+    properties:
+      amount:
+        type: number
+        description: Nouveau montant de la transaction
+      description:
+        type: string
+        description: Nouvelle description de la transaction
+
+  ApiResponse:
+    type: object
+    properties:
+      status:
+        type: integer
+        example: 200
+      message:
+        type: string
+        example: "Succès"
