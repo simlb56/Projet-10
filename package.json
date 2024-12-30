@@ -22,12 +22,13 @@
     "yaml": "^2.3.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "prisma:speed": "prisma db seed",
-    "vercel-build": "prisma generate && prisma migrate deploy && next build"
+  "start": "react-scripts start",
+  "build": "react-scripts build",
+  "test": "react-scripts test",
+  "eject": "react-scripts eject",
+  "prisma:speed": "prisma db seed",
+  "vercel-build": "react-scripts build"
+
   },
   "eslintConfig": {
     "extends": [
